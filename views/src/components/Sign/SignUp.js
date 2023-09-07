@@ -10,17 +10,31 @@ const SignUp = () => {
 
     const signupHandler = async (e) => {
         e.preventDefault();
-        let obj = {
-            name: name.current.value,
-            email: email.current.value,
-            password: password.current.value
+        let obj
+        if (signup) {
+            obj = {
+                name: name.current.value,
+                email: email.current.value,
+                password: password.current.value
+            }
+        } else {
+            obj = {
+                email: email.current.value,
+                password: password.current.value
+            }
         }
+
         try {
-            const response = await axios.post('http://localhost:3000/user/create-user', obj)
-            console.log(response)
+            if (signup) {
+                const response = await axios.post('http://localhost:3000/user/create-user', obj)
+                console.log(response)
+            } else {
+                const response = await axios.post('http://localhost:3000/user/login-user', obj)
+                console.log(response)
+            }
         }
-        catch {
-            console.log('Not Found')
+        catch (err) {
+            console.log(err)
         }
 
     }

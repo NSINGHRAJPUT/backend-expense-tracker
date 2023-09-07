@@ -17,3 +17,16 @@ exports.createUser = (req, res) => {
             })
         })
 }
+
+exports.loginUser = (req, res) => {
+    const { email, password } = req.body;
+    User.findAll({ where: { email: email } })
+        .then(([user]) => {
+            if (user.password == password) {
+                res.send('login successful');
+            } else {
+                res.send('wrong credentials')
+            }
+        })
+        .catch(err => console.log(err))
+}
