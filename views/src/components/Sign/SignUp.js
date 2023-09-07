@@ -23,7 +23,7 @@ const SignUp = () => {
                 password: password.current.value
             }
         }
-
+        console.log(obj)
         try {
             let response;
             if (signup) {
@@ -32,7 +32,7 @@ const SignUp = () => {
             } else {
                 response = await axios.post('http://localhost:3000/user/login-user', obj)
             }
-            alert(response.data)
+            console.log(response.data)
         }
         catch (err) {
             console.log(err)
