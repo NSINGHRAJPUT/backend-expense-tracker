@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react';
 import './SignUp.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 const SignUp = () => {
+    const navigate = useNavigate();
     const [signup, setSignup] = useState('true');
     const name = useRef();
     const email = useRef();
@@ -23,7 +25,6 @@ const SignUp = () => {
                 password: password.current.value
             }
         }
-        console.log(obj)
         try {
             let response;
             if (signup) {
@@ -33,6 +34,7 @@ const SignUp = () => {
                 response = await axios.post('http://localhost:3000/user/login-user', obj)
             }
             console.log(response.data)
+            navigate('/expense')
         }
         catch (err) {
             console.log(err)
