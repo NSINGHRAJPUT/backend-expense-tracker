@@ -27,10 +27,10 @@ const SignUp = () => {
         try {
             if (signup) {
                 const response = await axios.post('http://localhost:3000/user/create-user', obj)
-                console.log(response)
+                alert(response.data)
             } else {
                 const response = await axios.post('http://localhost:3000/user/login-user', obj)
-                console.log(response)
+                alert(response.data)
             }
         }
         catch (err) {

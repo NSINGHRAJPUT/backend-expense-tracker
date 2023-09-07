@@ -25,8 +25,8 @@ exports.loginUser = (req, res) => {
             if (user.password == password) {
                 res.send('login successful');
             } else {
-                res.send('wrong credentials')
+                res.send('wrong password')
             }
         })
-        .catch(err => console.log(err))
+        .catch(err => res.send('user does not exists'))
 }
