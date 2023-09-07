@@ -25,13 +25,14 @@ const SignUp = () => {
         }
 
         try {
+            let response;
             if (signup) {
-                const response = await axios.post('http://localhost:3000/user/create-user', obj)
-                alert(response.data)
+                response = await axios.post('http://localhost:3000/user/create-user', obj)
+
             } else {
-                const response = await axios.post('http://localhost:3000/user/login-user', obj)
-                alert(response.data)
+                response = await axios.post('http://localhost:3000/user/login-user', obj)
             }
+            alert(response.data)
         }
         catch (err) {
             console.log(err)
@@ -43,17 +44,17 @@ const SignUp = () => {
         <section className="signup-form">
             <form className='form' onSubmit={signupHandler}>
                 <h1>{signup ? "Sign Up Form" : "Sign In Form"}</h1>
-                {signup && <label htmlFor='name'>Name</label>}
+                {signup && <label >Name</label>}
                 {signup && <input type='text' ref={name} name='name'></input>}
-                <label htmlFor='email'>Email</label>
+                <label >Email</label>
                 <input type='email' ref={email} name='email'></input>
-                <label htmlFor='password'>Password</label>
+                <label >Password</label>
                 <input type='password' ref={password} name='password'></input>
                 <button type='submit'>{signup ? "Create Account" : "Sign In"}</button>
-                <div>
-                    <button onClick={() => setSignup(!signup)}>{signup ? "Already a user!!! Sign In here" : "New User !!! Sign Up here"}</button>
-                </div>
             </form>
+            <div>
+                <button onClick={() => setSignup(!signup)}>{signup ? "Already a user!!! Sign In here" : "New User !!! Sign Up here"}</button>
+            </div>
         </section>
     </div>
 }
