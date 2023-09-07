@@ -32,6 +32,14 @@ const Expense = () => {
             .catch(err => console.log(err))
     }
 
+    const deleteExpenseHandler = (e) => {
+        e.preventDefault();
+        let expenseId = e.target.value
+        axios.post('http://localhost:3000/expense/delete-expense', { id: expenseId })
+            .then((res) => console.log(res))
+            .catch(err => console.log(err))
+    }
+
     return <div className='expense'>
         <section className='expense-section'>
             <form className='expense-form' onSubmit={expenseHandler}>
@@ -45,7 +53,9 @@ const Expense = () => {
             </form>
             <ul>
                 {data.map((expense) => {
-                    return <li key={expense.id}>{expense.name} - {expense.price} - {expense.description}</li>
+                    return <li key={expense.id}>{expense.name} - {expense.price} - {expense.description}
+                        <button onClick={deleteExpenseHandler} value={expense.id}>X</button>
+                    </li>
                 })}
             </ul>
         </section>
