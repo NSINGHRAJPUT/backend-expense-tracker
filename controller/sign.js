@@ -12,9 +12,9 @@ exports.createUser = (req, res) => {
                     User.create({
                         name: name,
                         email: email,
-                        password: hash
-                    }).then(() => {
-                        res.send(name, email, password)
+                        password: hash,
+                    }).then((result) => {
+                        res.send(result)
                     }).catch((err) => {
                         console.log(err);
                         res.send('some error occurred! please try again later')
@@ -32,8 +32,8 @@ exports.loginUser = (req, res) => {
     User.findAll({ where: { email: email } })
         .then(([user]) => {
             bCrypt.compare(password, user.password, (err, hash) => {
-                if (!err) {
-                    res.send('login successful');
+                if (hash) {
+                    res.send(user);
                 } else {
                     res.send('wrong password')
                 }

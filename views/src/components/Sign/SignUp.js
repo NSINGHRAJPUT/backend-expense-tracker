@@ -29,12 +29,25 @@ const SignUp = () => {
             let response;
             if (signup) {
                 response = await axios.post('http://localhost:3000/user/create-user', obj)
-
+                console.log(response.data)
+                if (response.data === 'user already exists') {
+                    alert(response.data)
+                } else {
+                    alert('successfully registered! Now you can sign in')
+                }
+                setSignup(!signup)
             } else {
                 response = await axios.post('http://localhost:3000/user/login-user', obj)
+                if (response.data === 'wrong password') {
+                    alert(response.data)
+                } else if (response.data === 'user does not exists') {
+                    alert(response.data)
+                    setSignup(!signup)
+                } else {
+                    const userId = response.data.id
+                    navigate('/expense', { state: userId })
+                }
             }
-            console.log(response.data)
-            navigate('/expense')
         }
         catch (err) {
             console.log(err)

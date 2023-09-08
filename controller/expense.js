@@ -7,11 +7,12 @@ exports.getExpense = (req, res) => {
 }
 
 exports.createExpense = (req, res) => {
-    const { name, price, description } = req.body;
+    const { name, price, category, userId } = req.body;
     Expense.create({
         name: name,
         price: price,
-        description: description
+        category: category,
+        userId: userId
     }).then((response) => {
         res.send(response)
     }).catch(err => console.log(err))
