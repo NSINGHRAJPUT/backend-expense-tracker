@@ -1,7 +1,8 @@
 const Expense = require('../model/expense')
+const rzp = require('razorpay');
 
 exports.getExpense = (req, res) => {
-    Expense.findAll().then((expense) => {
+    Expense.findAll({ where: { userId: req.user.userId } }).then((expense) => {
         res.send(expense);
     }).catch(err => console.log(err))
 }
@@ -19,7 +20,7 @@ exports.createExpense = (req, res) => {
 }
 
 exports.deleteExpense = (req, res) => {
-    const expenseId = req.body.id;
+    const expenseId = req.headers.id;
     let obj = {}
     Expense.findAll({ where: { id: expenseId } }).then(([expense]) => {
         obj = { ...expense }
@@ -28,3 +29,4 @@ exports.deleteExpense = (req, res) => {
         res.send(obj)
     }).catch(err => console.log(err))
 }
+
