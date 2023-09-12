@@ -5,5 +5,6 @@ const premiumController = require('../controller/premium');
 const router = express.Router();
 
 router.get('/get-premium', authMiddleware, premiumController.getPremium);
+router.post('/update-premium', authMiddleware, premiumController.updatePremium)
 
 module.exports = router; 

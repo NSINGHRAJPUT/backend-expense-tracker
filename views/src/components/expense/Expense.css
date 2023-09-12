@@ -1,0 +1,65 @@
+.expense {
+    background-image: url('../../assets/expenseback.jpg');
+    color: #111;
+    height: 100vh;
+    width: 100vw;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.expense-container {
+    width: 95vw;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.premiumbtn {
+    display: flex;
+    margin: auto;
+
+}
+
+.premiumbtn button {
+    color: darkred;
+    cursor: pointer;
+}
+
+.expense-section {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.expense-form {
+    width: fit-content;
+    padding: 3%;
+    border: 8px solid darkred;
+    margin: auto;
+}
+
+table {
+    text-align: center;
+    width: 80vw;
+    margin: auto;
+    padding: auto;
+}
+
+tr {
+    padding: 5%;
+}
+
+th {
+    color: darkred;
+}
+
+th,
+td {
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 30px;
+    padding-right: 40px;
+}

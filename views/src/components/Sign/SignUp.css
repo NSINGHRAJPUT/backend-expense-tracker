@@ -1,14 +1,25 @@
 .form-component {
-    background: #222;
+    background-image: url('../../assets/back.jpg');
     color: #fff;
-    height: 98vh;
+    height: 100vh;
+    width: 100vw;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: flex-start;
 }
 
 .signup-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 70vh;
     width: 360px;
     margin: auto;
     padding: 20px;
@@ -16,15 +27,17 @@
 
 .form {
     display: flex;
-    height: 50vh;
+    height: 60vh;
     width: 320px;
     flex-direction: column;
-    justify-content: space-evenly;
-    border: 2px solid gray;
-    background: rgba(255, 255, 255, 0.059);
-    border-radius: 25px;
-    box-shadow: #ffffff 2px 2px;
+    justify-content: space-between;
+    border: 2px solid darkred;
+    background: rgba(11, 8, 8, 0.164);
     padding: 20px;
+}
+
+.form h1 {
+    color: darkred;
 }
 
 .form input {
@@ -34,21 +47,30 @@
 
 .form button {
     width: fit-content;
-    background: rgb(34, 3, 77);
     color: #fff;
-    border: 2px solid #949191;
-    border-radius: 25px;
+    background: #111;
+    border: 2px solid darkred;
     padding: 3%;
 }
 
 .form button:hover {
-    background: rgb(51, 119, 2);
-    color: #111;
     cursor: pointer;
-
 }
 
 .form div {
     display: flex;
     margin: 50px;
+}
+
+.logbtndiv {
+    text-align: center;
+    padding: 5%;
+}
+
+.logbtn {
+    color: darkred;
+}
+
+.navbar h1 span {
+    color: darkred;
 }

@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import './SignUp.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
-import { Tilt } from 'react-tilt';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -59,22 +58,23 @@ const SignUp = () => {
         }
     }
 
-    return <div className='form-component'>
-        <section className="signup-form">
-            <Tilt>
-                <form className='form' onSubmit={signupHandler}>
-                    <h1>{signup ? "Sign Up Form" : "Sign In Form"}</h1>
-                    {signup && <label >Name</label>}
-                    {signup && <input type='text' ref={name} name='name'></input>}
-                    <label >Email</label>
-                    <input type='email' ref={email} name='email'></input>
-                    <label >Password</label>
-                    <input type='password' ref={password} name='password'></input>
-                    <button type='submit'>{signup ? "Create Account" : "Sign In"}</button>
-                </form>
-            </Tilt>
-            <div>
-                <button onClick={() => setSignup(!signup)}>{signup ? "Already a user!!! Sign In here" : "New User !!! Sign Up here"}</button>
+    return <div className='form-component' data-aos="fade-up" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="900">
+        <div className='navbar'>
+            <h1 className='spaceX'><span>Expense </span> Tracker <span> App</span></h1>
+        </div>
+        <section className="signup-form" lassName='form-component' data-aos="fade-down" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
+            <form className='form' onSubmit={signupHandler}>
+                <h1 className='spaceX'>{signup ? "Sign Up Form" : "Sign In Form"}</h1>
+                {signup && <label >Name</label>}
+                {signup && <input type='text' ref={name} name='name'></input>}
+                <label >Email</label>
+                <input type='email' ref={email} name='email'></input>
+                <label >Password</label>
+                <input type='password' ref={password} name='password'></input>
+                <button type='submit'>{signup ? "Create Account" : "Sign In"}</button>
+            </form>
+            <div className='logbtndiv'>
+                <button className='logbtn' onClick={() => setSignup(!signup)}>{signup ? "Already a user!!! Sign In here" : "New User !!! Sign Up here"}</button>
             </div>
         </section>
     </div>

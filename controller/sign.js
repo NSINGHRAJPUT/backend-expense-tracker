@@ -38,7 +38,7 @@ exports.loginUser = (req, res) => {
         .then(([user]) => {
             bCrypt.compare(password, user.password, (err, hash) => {
                 if (hash) {
-                    res.status(202).json({ id: user.id, token: generateToken(user.id, user.name), email: user.email, name: user.name })
+                    res.status(202).json({ id: user.id, token: generateToken(user.id, user.name), email: user.email, name: user.name, isPremium: user.isPremium })
                 } else {
                     res.send('wrong password')
                 }

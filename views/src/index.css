@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: "My Custom Font";
+  src: url(assets/fonts/SpaceX.ttf) format("woff");
+}
+
+.spaceX {
+  font-family: "My Custom Font", Verdana, Tahoma;
+}
