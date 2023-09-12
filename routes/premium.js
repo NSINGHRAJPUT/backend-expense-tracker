@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.get('/get-premium', authMiddleware, premiumController.getPremium);
 router.post('/update-premium', authMiddleware, premiumController.updatePremium)
+router.get('/show-users', premiumController.showUsers);
 
 module.exports = router; 

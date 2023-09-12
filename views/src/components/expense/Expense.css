@@ -63,3 +63,9 @@ td {
     padding-left: 30px;
     padding-right: 40px;
 }
+
+td button:hover {
+    color: #fff;
+    background: red;
+    cursor: pointer;
+}

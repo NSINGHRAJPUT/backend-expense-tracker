@@ -1,6 +1,7 @@
 const Razorpay = require('razorpay');
 const Order = require('../model/order');
 const User = require('../model/user');
+const Expense = require('../model/expense');
 
 exports.getPremium = async (req, res) => {
     try {
@@ -19,11 +20,6 @@ exports.getPremium = async (req, res) => {
                     res.status(201).json({ order, key_id: rzp.key_id })
                 }).catch(err => res.send(err))
             }
-
-            // req.user.createOrder({
-            //     orderid: order.id, status: 'PENDING'
-            //     }).then(() => res.status(201).json({ order, key_id: rzp.key_id }))
-            //         .catch(err => { throw new Error(err) })
         })
     }
     catch (err) {
@@ -48,4 +44,10 @@ exports.updatePremium = async (req, res) => {
             .catch(err => res.send(err))
     }).catch(err => res.send(err));
 
+}
+
+exports.showUsers = async (req, res) => {
+    Expense.findAll().then((expenses) => {
+        res.send(expenses)
+    }).catch(err => res.send(err))
 }

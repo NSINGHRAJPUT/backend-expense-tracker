@@ -46,3 +46,8 @@ exports.loginUser = (req, res) => {
         })
         .catch(err => res.send('user does not exists'))
 }
+
+exports.getUser = async (req, res) => {
+    const id = req.headers.id
+    User.findAll({ where: { id: id } }).then(([user]) => res.send(user)).catch(err => { res.send(err) })
+}

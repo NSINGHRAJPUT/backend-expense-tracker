@@ -10,6 +10,8 @@ const Expense = () => {
     const price = useRef();
     const category = useRef();
     const [data, setData] = useState([]);
+    const [leaderboarddata, setleaderboardData] = useState([]);
+    const [showboard, setshowboard] = useState(false)
 
     /////////////////////               FETCHING EXPENSES                    ////////////////////////
     //                                                                                           //
@@ -17,9 +19,7 @@ const Expense = () => {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     useEffect(() => {
         axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
-            .then((res) => {
-                setData(res.data);
-            })
+            .then((res) => { setData(res.data) })
             .catch(err => console.log(err))
     }, [token])
 
@@ -88,15 +88,55 @@ const Expense = () => {
             .catch(err => console.log(err))
     }
 
-    return <div className='expense'>
-        <div className='expense-container'>
+
+    const leaderboradHandler = async (e) => {
+        e.preventDefault();
+        let leaderboard = [];
+        try {
+            const response = await axios.get('http://localhost:3000/premium/show-users')
+            response.data.map((expense) => {
+                if (leaderboard.length < 1) {
+                    return leaderboard.push(expense)
+                } else {
+                    for (let i = 1; i <= leaderboard.length; i++) {
+                        if (expense.userId === leaderboard[i - 1].userId) {
+                            return leaderboard[i - 1].price = leaderboard[i - 1].price + (+expense.price)
+                        } else {
+                            return leaderboard.push(expense)
+                        }
+                    }
+                }
+                return leaderboard
+            })
+            for (let i = 0; i < leaderboard.length; i++) {
+                const usernames = await axios.get('http://localhost:3000/user/get-users', { headers: { 'id': leaderboard[i].userId } })
+                leaderboard[i].username = usernames.data.name;
+            }
+            leaderboard.sort((a, b) => {
+                return a.price - b.price;
+            })
+            setleaderboardData(pre => [...leaderboard])
+            console.log(leaderboarddata, leaderboard)
+            setshowboard(!showboard)
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+    }
+
+    return <div className='expense' data-aos="fade-left" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="900">
+        <div className='expense-container' data-aos="fade-right" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
             <div className='navbar'>
                 <h1 className='spaceX'><span>Expense </span> Tracker <span> App</span></h1>
                 <div className="animate__animated animate__heartBeat animate__slower animate__infinite premiumbtn">
                     {!location.state.isPremium && <button value={location.state.token} onClick={premiumHandler}>Buy Premium</button>}
                 </div>
+                <div className="animate__animated animate__heartBeat animate__slower animate__infinite premiumbtn">
+                    {location.state.isPremium && <button value={location.state.token} onClick={leaderboradHandler}>Show Leaderboard</button>}
+                </div>
             </div>
-            <section className='expense-section'>
+            <section className='expense-section' data-aos="fade-right" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
                 <form className='expense-form' onSubmit={expenseHandler}>
                     <label >Expense Name</label>
                     <input type='text' ref={name}></input>
@@ -106,12 +146,8 @@ const Expense = () => {
                     <input type='text' ref={category}></input>
                     <button type='submit'>Add Expense</button>
                 </form>
-
             </section>
-            <ul>
-
-            </ul>
-            <table>
+            <table data-aos="fade-right" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
                 <tbody>
                     <tr>
                         <th>Name</th>
@@ -128,6 +164,13 @@ const Expense = () => {
                     })}
                 </tbody>
             </table>
+            <ul>
+                {
+                    showboard && leaderboarddata.map((userData) => {
+                        return <li key={userData.id}>{userData.username}-{userData.price}</li>
+                    })
+                }
+            </ul>
         </div>
     </div>
 }
