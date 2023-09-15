@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/create-user', signController.createUser)
 router.post('/login-user', signController.loginUser)
 router.get('/get-users', signController.getUser)
-router.post('/update-userexpense', signController.updateUserExpense)
+
 
 
 

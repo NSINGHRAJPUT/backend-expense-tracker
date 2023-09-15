@@ -5,8 +5,7 @@ import { useLocation, useNavigate } from 'react-router';
 
 const Expense = () => {
     const location = useLocation();
-    const token = location.state.token;
-    const userId = location.state.id;
+    const navigate = useNavigate();
     const name = useRef();
     const price = useRef();
     const category = useRef();
@@ -14,10 +13,10 @@ const Expense = () => {
     const [data, setData] = useState([]);
     const [leaderboarddata, setleaderboardData] = useState([]);
     const [showboard, setshowboard] = useState(false)
+    const token = location.state.token;
+    const userId = location.state.id;
 
-    const navigate = useNavigate();
-
-    /////////////////////               FETCHING EXPENSES                    ////////////////////////
+    /////////////////////               FETCHING EXPENSES                    //////////////////////
     //                                                                                           //
     //                                                                                           //   
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +34,7 @@ const Expense = () => {
             }).catch(err => console.log(err))
     }, [token, userId])
 
-    /////////////////////                ADDING EXPENSES                     ////////////////////////
+    /////////////////////                ADDING EXPENSES                     //////////////////////
     //                                                                                           //
     //                                                                                           //   
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,9 +48,6 @@ const Expense = () => {
         }
         console.log(expenseObj)
         axios.post('http://localhost:3000/expense/create-expense', expenseObj)
-            .then((res) => console.log(res))
-            .catch(err => console.log(err))
-        axios.post('http://localhost:3000/user/update-userexpense', { price: price.current.value, id: location.state.id })
             .then((res) => console.log(res))
             .catch(err => console.log(err))
         name.current.value = '';
@@ -69,19 +65,16 @@ const Expense = () => {
     const deleteExpenseHandler = (e) => {
         e.preventDefault();
         let expenseId = e.target.value
-        axios.delete('http://localhost:3000/expense/delete-expense', { headers: { "id": expenseId } })
+        axios.delete('http://localhost:3000/expense/delete-expense', { headers: { id: expenseId } })
             .then((res) => {
                 console.log(res)
-
-                axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
-                    .then((res) => {
-                        setData(res.data)
-                        alert('Item Deleted')
-                    })
-                    .catch(err => console.log(err))
+                // axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
+                //     .then((res) => {
+                //         setData(res.data)
+                //         alert('Item Deleted')
+                //     })
             })
             .catch(err => console.log(err))
-
     }
 
     /////////////////////               PURCHASE PREMIUM                   ////////////////////////
@@ -117,6 +110,7 @@ const Expense = () => {
             })
             .catch(err => console.log(err))
     }
+
     /////////////////////               Leaderboard                        ////////////////////////
     //                                                                                           //
     //                                                                                           //   
@@ -147,7 +141,7 @@ const Expense = () => {
                 <div className="animate__animated animate__heartBeat animate__slower animate__infinite premiumbtn">
                     {premium && <button value={location.state.token} onClick={leaderboradHandler}>Show Leaderboard</button>}
                 </div>
-                <div className="animate__animated animate__heartBeat animate__slower animate__infinite premiumbtn">
+                <div className="premiumbtn">
                     <button onClick={() => navigate('/')}>logout</button>
                 </div>
             </div>
@@ -176,7 +170,7 @@ const Expense = () => {
                             <td >{expense.name}</td>
                             <td> {expense.price} </td>
                             <td>{expense.category}</td>
-                            <td>  <button onClick={deleteExpenseHandler} value={expense.id}>X</button></td>
+                            <td>  <button onClick={deleteExpenseHandler} value={[expense.userId, expense.price, expense.id]}>X</button></td>
                         </tr>
                     })}
                 </tbody>
@@ -187,7 +181,6 @@ const Expense = () => {
                     <tr>
                         <th>Name</th>
                         <th>Expense</th>
-
                     </tr>
                     {leaderboarddata.map((userData, i) => {
                         return <tr key={i}>

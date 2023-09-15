@@ -54,18 +54,3 @@ exports.getUser = async (req, res) => {
 }
 
 
-exports.updateUserExpense = async (req, res) => {
-    console.log(req.body)
-    let obj = {};
-    User.findAll({ where: { id: req.body.id } })
-        .then(([user]) => {
-            if (user.expense) {
-                user.expense = user.expense + (+req.body.price);
-            } else {
-                user.expense = req.body.price;
-            }
-            return user.save()
-        }).then((result) => {
-            res.send(result);
-        }).catch(err => res.send(err))
-}
