@@ -44,10 +44,25 @@ exports.updatePremium = async (req, res) => {
             .catch(err => res.send(err))
     }).catch(err => res.send(err));
 
+
 }
 
 exports.showUsers = async (req, res) => {
-    Expense.findAll().then((expenses) => {
-        res.send(expenses)
-    }).catch(err => res.send(err))
+    // Expense.findAll().then((expenses) => {
+    //     res.send(expenses)
+    // }).catch(err => res.send(err))
+    let leaderboard = [];
+    try {
+        const response = await User.findAll({ attributes: ['name', 'expense'] })
+        response.map((user) => {
+            leaderboard.push(user.dataValues)
+        })
+        leaderboard.sort((a, b) => {
+            return b.expense - a.expense;
+        })
+        res.send(leaderboard)
+    }
+    catch (err) {
+        console.log(err)
+    }
 }

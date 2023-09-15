@@ -38,7 +38,7 @@ exports.loginUser = (req, res) => {
         .then(([user]) => {
             bCrypt.compare(password, user.password, (err, hash) => {
                 if (hash) {
-                    res.status(202).json({ id: user.id, token: generateToken(user.id, user.name), email: user.email, name: user.name, isPremium: user.isPremium })
+                    res.status(202).json({ id: user.id, token: generateToken(user.id, user.name), email: user.email, name: user.name, isPremium: user.isPremium, expense: user.expense })
                 } else {
                     res.send('wrong password')
                 }
@@ -48,6 +48,24 @@ exports.loginUser = (req, res) => {
 }
 
 exports.getUser = async (req, res) => {
-    const id = req.headers.id
+    const id = req.headers.id;
+    console.log(id)
     User.findAll({ where: { id: id } }).then(([user]) => res.send(user)).catch(err => { res.send(err) })
+}
+
+
+exports.updateUserExpense = async (req, res) => {
+    console.log(req.body)
+    let obj = {};
+    User.findAll({ where: { id: req.body.id } })
+        .then(([user]) => {
+            if (user.expense) {
+                user.expense = user.expense + (+req.body.price);
+            } else {
+                user.expense = req.body.price;
+            }
+            return user.save()
+        }).then((result) => {
+            res.send(result);
+        }).catch(err => res.send(err))
 }

@@ -48,7 +48,6 @@ const SignUp = () => {
                     setSignup(!signup)
                 } else {
                     const userId = response.data
-                    console.log(userId)
                     navigate('/expense', { state: userId })
                 }
             }
@@ -62,7 +61,7 @@ const SignUp = () => {
         <div className='navbar'>
             <h1 className='spaceX'><span>Expense </span> Tracker <span> App</span></h1>
         </div>
-        <section className="signup-form" lassName='form-component' data-aos="fade-down" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
+        <section className='signup-form ' data-aos="fade-down" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
             <form className='form' onSubmit={signupHandler}>
                 <h1 className='spaceX'>{signup ? "Sign Up Form" : "Sign In Form"}</h1>
                 {signup && <label >Name</label>}

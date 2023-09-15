@@ -1,17 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import './Expense.css';
 import axios from 'axios';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 const Expense = () => {
     const location = useLocation();
     const token = location.state.token;
+    const userId = location.state.id;
     const name = useRef();
     const price = useRef();
     const category = useRef();
+    const [premium, setPremium] = useState(location.state.isPremium);
     const [data, setData] = useState([]);
     const [leaderboarddata, setleaderboardData] = useState([]);
     const [showboard, setshowboard] = useState(false)
+
+    const navigate = useNavigate();
 
     /////////////////////               FETCHING EXPENSES                    ////////////////////////
     //                                                                                           //
@@ -21,7 +25,15 @@ const Expense = () => {
         axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
             .then((res) => { setData(res.data) })
             .catch(err => console.log(err))
-    }, [token])
+        axios.get('http://localhost:3000/user/get-users', { headers: { 'id': userId } })
+            .then((res) => {
+                if (res.data.isPremium) {
+                    setPremium(true);
+                } else {
+                    setPremium(false)
+                }
+            }).catch(err => console.log(err))
+    }, [token, userId])
 
     /////////////////////                ADDING EXPENSES                     ////////////////////////
     //                                                                                           //
@@ -39,9 +51,15 @@ const Expense = () => {
         axios.post('http://localhost:3000/expense/create-expense', expenseObj)
             .then((res) => console.log(res))
             .catch(err => console.log(err))
+        axios.post('http://localhost:3000/user/update-userexpense', { price: price.current.value, id: location.state.id })
+            .then((res) => console.log(res))
+            .catch(err => console.log(err))
         name.current.value = '';
         price.current.value = '';
         category.current.value = ''
+        axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
+            .then((res) => { setData(res.data) })
+            .catch(err => console.log(err))
     }
 
     /////////////////////               DELETING EXPENSES                  ////////////////////////
@@ -52,7 +70,10 @@ const Expense = () => {
         e.preventDefault();
         let expenseId = e.target.value
         axios.delete('http://localhost:3000/expense/delete-expense', { headers: { "id": expenseId } })
-            .then((res) => console.log(res))
+            .then((res) => {
+                console.log(res)
+                alert('Item Deleted')
+            })
             .catch(err => console.log(err))
     }
 
@@ -75,6 +96,8 @@ const Expense = () => {
                             .then((res) => console.log(res))
                             .catch(err => console.log(err))
                         alert('You are a Premium User Now')
+                        setPremium(true);
+                        location.state.isPremium = true;
                     }
                 }
                 const rzp1 = new window.Razorpay(options);
@@ -88,35 +111,40 @@ const Expense = () => {
             .catch(err => console.log(err))
     }
 
-
     const leaderboradHandler = async (e) => {
         e.preventDefault();
         let leaderboard = [];
         try {
             const response = await axios.get('http://localhost:3000/premium/show-users')
-            response.data.map((expense) => {
-                if (leaderboard.length < 1) {
-                    return leaderboard.push(expense)
-                } else {
-                    for (let i = 1; i <= leaderboard.length; i++) {
-                        if (expense.userId === leaderboard[i - 1].userId) {
-                            return leaderboard[i - 1].price = leaderboard[i - 1].price + (+expense.price)
-                        } else {
-                            return leaderboard.push(expense)
-                        }
-                    }
-                }
-                return leaderboard
-            })
-            for (let i = 0; i < leaderboard.length; i++) {
-                const usernames = await axios.get('http://localhost:3000/user/get-users', { headers: { 'id': leaderboard[i].userId } })
-                leaderboard[i].username = usernames.data.name;
-            }
-            leaderboard.sort((a, b) => {
-                return a.price - b.price;
+            console.log(response)
+            response.data.map((ldbd) => {
+                return leaderboard.push(ldbd);
             })
             setleaderboardData(pre => [...leaderboard])
-            console.log(leaderboarddata, leaderboard)
+            console.log(leaderboard)
+            // response.data.map((expense) => {
+            //     if (leaderboard.length < 1) {
+            //         return leaderboard.push(expense)
+            //     } else {
+            //         for (let i = 1; i <= leaderboard.length; i++) {
+            //             if (expense.userId === leaderboard[i - 1].userId) {
+            //                 return leaderboard[i - 1].price = leaderboard[i - 1].price + (+expense.price)
+            //             } else {
+            //                 return leaderboard.push(expense)
+            //             }
+            //         }
+            //     }
+            //     return leaderboard
+            // })
+            // for (let i = 0; i < leaderboard.length; i++) {
+            //     const usernames = await axios.get('http://localhost:3000/user/get-users', { headers: { 'id': leaderboard[i].userId } })
+            //     leaderboard[i].username = usernames.data.name;
+            // }
+            // leaderboard.sort((a, b) => {
+            //     return a.price - b.price;
+            // })
+            // setleaderboardData(pre => [...leaderboard])
+            // console.log(leaderboarddata, leaderboard)
             setshowboard(!showboard)
         }
         catch (err) {
@@ -130,10 +158,13 @@ const Expense = () => {
             <div className='navbar'>
                 <h1 className='spaceX'><span>Expense </span> Tracker <span> App</span></h1>
                 <div className="animate__animated animate__heartBeat animate__slower animate__infinite premiumbtn">
-                    {!location.state.isPremium && <button value={location.state.token} onClick={premiumHandler}>Buy Premium</button>}
+                    {!premium && <button value={location.state.token} onClick={premiumHandler}>Buy Premium</button>}
                 </div>
                 <div className="animate__animated animate__heartBeat animate__slower animate__infinite premiumbtn">
-                    {location.state.isPremium && <button value={location.state.token} onClick={leaderboradHandler}>Show Leaderboard</button>}
+                    {premium && <button value={location.state.token} onClick={leaderboradHandler}>Show Leaderboard</button>}
+                </div>
+                <div className="animate__animated animate__heartBeat animate__slower animate__infinite premiumbtn">
+                    <button onClick={() => navigate('/')}>logout</button>
                 </div>
             </div>
             <section className='expense-section' data-aos="fade-right" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
@@ -166,8 +197,8 @@ const Expense = () => {
             </table>
             <ul>
                 {
-                    showboard && leaderboarddata.map((userData) => {
-                        return <li key={userData.id}>{userData.username}-{userData.price}</li>
+                    showboard && leaderboarddata.map((userData, i) => {
+                        return <li key={i}>{userData.name}-{userData.expense}</li>
                     })
                 }
             </ul>
