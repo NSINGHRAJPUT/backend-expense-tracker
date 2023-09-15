@@ -70,7 +70,10 @@ const SignUp = () => {
                 <input type='email' ref={email} name='email'></input>
                 <label >Password</label>
                 <input type='password' ref={password} name='password'></input>
-                <button type='submit'>{signup ? "Create Account" : "Sign In"}</button>
+                <button type='submit' className='submit'>{signup ? "Create Account" : "Sign In"}</button>
+                <div >
+                    <button className='forgotpass' onClick={() => navigate('/forgot-password')}>Forgot Password</button>
+                </div>
             </form>
             <div className='logbtndiv'>
                 <button className='logbtn' onClick={() => setSignup(!signup)}>{signup ? "Already a user!!! Sign In here" : "New User !!! Sign Up here"}</button>

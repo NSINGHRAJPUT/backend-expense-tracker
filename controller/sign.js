@@ -1,6 +1,9 @@
 const User = require('../model/user')
 const bCrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Sib = require('sib-api-v3-sdk');
+
+require('dotenv').config();
 
 exports.createUser = (req, res) => {
     const { name, email, password } = req.body;
@@ -53,4 +56,27 @@ exports.getUser = async (req, res) => {
     User.findAll({ where: { id: id } }).then(([user]) => res.send(user)).catch(err => { res.send(err) })
 }
 
+exports.forgotPassword = async (req, res) => {
+    console.log(req.body)
+    const RECEIVERS_MAIL = req.body.email;
+    try {
+        const client = Sib.ApiClient.instance;
+        var apiKey = client.authentications["api-key"];
+        apiKey.apiKey = process.env.FORGOT_API_KEY;
+        const tranEmailApi = new Sib.TransactionalEmailsApi();
+        const sender = { email: process.env.SENDER_MAIL };
+        const recivers = [{ email: process.env.RECEIVERS_MAIL }];
 
+        const response = await tranEmailApi.sendTransacEmail({
+            sender,
+            to: recivers,
+            subject: "forgot password testing",
+            textContent: `just doing some testing`,
+        });
+        res.send(response);
+    }
+    catch (err) {
+        res.send(err)
+    }
+
+}
