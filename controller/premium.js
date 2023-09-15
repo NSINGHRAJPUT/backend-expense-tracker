@@ -28,7 +28,6 @@ exports.getPremium = async (req, res) => {
     }
 }
 
-
 exports.updatePremium = async (req, res) => {
     User.findAll({ where: { id: req.user.userId } }).then(([user]) => {
         user.isPremium = true;
@@ -43,14 +42,9 @@ exports.updatePremium = async (req, res) => {
             }).then(() => res.send(result))
             .catch(err => res.send(err))
     }).catch(err => res.send(err));
-
-
 }
 
 exports.showUsers = async (req, res) => {
-    // Expense.findAll().then((expenses) => {
-    //     res.send(expenses)
-    // }).catch(err => res.send(err))
     let leaderboard = [];
     try {
         const response = await User.findAll({ attributes: ['name', 'expense'] })
@@ -63,6 +57,6 @@ exports.showUsers = async (req, res) => {
         res.send(leaderboard)
     }
     catch (err) {
-        console.log(err)
+        res.send(err)
     }
 }

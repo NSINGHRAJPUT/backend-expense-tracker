@@ -10,6 +10,14 @@
     flex-wrap: wrap;
 }
 
+.dark {
+    background: url('../../assets/dark.jpg');
+    color: #fff;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 120vh;
+}
+
 .expense-container {
     width: 95vw;
     display: flex;
@@ -37,8 +45,14 @@
 .expense-form {
     width: fit-content;
     padding: 3%;
-    border: 8px solid darkred;
+    border: 6px solid darkred;
     margin: auto;
+}
+
+.expense-form input {
+    background: transparent;
+    border: 2px solid red;
+    color: #fff;
 }
 
 table {
@@ -46,6 +60,7 @@ table {
     width: 80vw;
     margin: auto;
     padding: auto;
+    border: 2px solid darkred;
 }
 
 tr {
@@ -62,10 +77,11 @@ td {
     padding-bottom: 20px;
     padding-left: 30px;
     padding-right: 40px;
+    border: 2px solid darkred;
 }
 
 td button:hover {
     color: #fff;
-    background: red;
+    background: darkred;
     cursor: pointer;
 }

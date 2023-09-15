@@ -72,9 +72,16 @@ const Expense = () => {
         axios.delete('http://localhost:3000/expense/delete-expense', { headers: { "id": expenseId } })
             .then((res) => {
                 console.log(res)
-                alert('Item Deleted')
+
+                axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
+                    .then((res) => {
+                        setData(res.data)
+                        alert('Item Deleted')
+                    })
+                    .catch(err => console.log(err))
             })
             .catch(err => console.log(err))
+
     }
 
     /////////////////////               PURCHASE PREMIUM                   ////////////////////////
@@ -110,50 +117,27 @@ const Expense = () => {
             })
             .catch(err => console.log(err))
     }
-
+    /////////////////////               Leaderboard                        ////////////////////////
+    //                                                                                           //
+    //                                                                                           //   
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     const leaderboradHandler = async (e) => {
         e.preventDefault();
         let leaderboard = [];
         try {
             const response = await axios.get('http://localhost:3000/premium/show-users')
-            console.log(response)
             response.data.map((ldbd) => {
                 return leaderboard.push(ldbd);
             })
             setleaderboardData(pre => [...leaderboard])
-            console.log(leaderboard)
-            // response.data.map((expense) => {
-            //     if (leaderboard.length < 1) {
-            //         return leaderboard.push(expense)
-            //     } else {
-            //         for (let i = 1; i <= leaderboard.length; i++) {
-            //             if (expense.userId === leaderboard[i - 1].userId) {
-            //                 return leaderboard[i - 1].price = leaderboard[i - 1].price + (+expense.price)
-            //             } else {
-            //                 return leaderboard.push(expense)
-            //             }
-            //         }
-            //     }
-            //     return leaderboard
-            // })
-            // for (let i = 0; i < leaderboard.length; i++) {
-            //     const usernames = await axios.get('http://localhost:3000/user/get-users', { headers: { 'id': leaderboard[i].userId } })
-            //     leaderboard[i].username = usernames.data.name;
-            // }
-            // leaderboard.sort((a, b) => {
-            //     return a.price - b.price;
-            // })
-            // setleaderboardData(pre => [...leaderboard])
-            // console.log(leaderboarddata, leaderboard)
             setshowboard(!showboard)
         }
         catch (err) {
             console.log(err)
         }
-
     }
 
-    return <div className='expense' data-aos="fade-left" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="900">
+    return <div className={premium ? 'expense dark' : 'expense'} data-aos="fade-left" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="900">
         <div className='expense-container' data-aos="fade-right" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
             <div className='navbar'>
                 <h1 className='spaceX'><span>Expense </span> Tracker <span> App</span></h1>
@@ -178,12 +162,14 @@ const Expense = () => {
                     <button type='submit'>Add Expense</button>
                 </form>
             </section>
+            <h2 className='spaceX'>Expenses</h2>
             <table data-aos="fade-right" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
                 <tbody>
                     <tr>
                         <th>Name</th>
                         <th>Price</th>
                         <th>Category</th>
+                        <th></th>
                     </tr>
                     {data.map((expense) => {
                         return <tr key={expense.id}>
@@ -195,13 +181,25 @@ const Expense = () => {
                     })}
                 </tbody>
             </table>
-            <ul>
-                {
-                    showboard && leaderboarddata.map((userData, i) => {
-                        return <li key={i}>{userData.name}-{userData.expense}</li>
+            {showboard && <h2 className='spaceX'>Leaderboard</h2>}
+            {showboard && <table >
+                <tbody>
+                    <tr>
+                        <th>Name</th>
+                        <th>Expense</th>
+
+                    </tr>
+                    {leaderboarddata.map((userData, i) => {
+                        return <tr key={i}>
+                            <td>{userData.name}</td>
+                            <td>{userData.expense}</td>
+                        </tr>
                     })
-                }
-            </ul>
+                    }
+                </tbody>
+            </table>
+            }
+
         </div>
     </div>
 }
