@@ -5,7 +5,6 @@ const Sib = require('sib-api-v3-sdk');
 const { v4: uuidv4 } = require('uuid')
 const Forgotpassword = require('../model/forgotpassword');
 
-
 require('dotenv').config();
 
 exports.createUser = (req, res) => {
@@ -35,7 +34,7 @@ exports.createUser = (req, res) => {
 }
 
 function generateToken(id, name) {
-    return jwt.sign({ userId: id, name: name }, '456sg56f4gsd546df8gsd7f8gfgd4ggfs7hfgsd135f64hfdjgh321nvb123xcvaew7e23')
+    return jwt.sign({ userId: id, name: name }, process.env.JWT_TOKEN)
 }
 
 exports.loginUser = (req, res) => {
@@ -92,20 +91,33 @@ exports.forgotPassword = async (req, res) => {
 }
 
 exports.resetPassword = async (req, res) => {
-    console.log(req.body)
     const password = req.body.password;
     try {
         const useridRes = await Forgotpassword.findOne({ where: { id: req.body.uid } })
-        console.log(useridRes.dataValues)
-        bCrypt.hash(password, 10, async function (err, hash) {
-            if (err) res.send('something went wrong');
-            const userRes = await User.update({ password: hash }, { where: { id: useridRes.dataValues.userId } })
-            res.send(userRes)
-        });
-
+        if (!useridRes.dataValues.isActive) {
+            res.status(401).send('Link Expired')
+            return;
+        }
+        const userResponse = await User.findOne({ where: { id: useridRes.dataValues.userId } })
+        bCrypt.compare(password, userResponse.dataValues.password, (err, hash) => {
+            if (hash) {
+                res.status(401).send('same password')
+                return;
+            } else {
+                bCrypt.hash(password, 10, async function (err, hash) {
+                    if (err) {
+                        res.status(401).send('something went wrong');
+                        return;
+                    }
+                    const userRes = await User.update({ password: hash }, { where: { id: useridRes.dataValues.userId } })
+                    await Forgotpassword.update({ isActive: false }, { where: { userId: useridRes.dataValues.userId } })
+                    res.send(userRes)
+                });
+            }
+        })
     }
     catch (err) {
-        console.log(err)
+        res.send(err)
     }
 }
 

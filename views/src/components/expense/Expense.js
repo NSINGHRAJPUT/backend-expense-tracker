@@ -54,7 +54,10 @@ const Expense = () => {
         price.current.value = '';
         category.current.value = ''
         axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
-            .then((res) => { setData(res.data) })
+            .then((res) => {
+                console.log(res.data)
+                setData(res.data)
+            })
             .catch(err => console.log(err))
     }
 
@@ -131,6 +134,11 @@ const Expense = () => {
         }
     }
 
+    const reportHandler = async (e) => {
+        e.preventDefault();
+        console.log('report downloaded')
+    }
+
     return <div className={premium ? 'expense dark' : 'expense'} data-aos="fade-left" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="900">
         <div className='expense-container' data-aos="fade-right" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
             <div className='navbar'>
@@ -175,6 +183,7 @@ const Expense = () => {
                     })}
                 </tbody>
             </table>
+            {premium && <button onClick={reportHandler}>Download Expenses</button>}
             {showboard && <h2 className='spaceX'>Leaderboard</h2>}
             {showboard && <table >
                 <tbody>

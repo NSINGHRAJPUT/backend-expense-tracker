@@ -1,12 +1,11 @@
-
-
 import axios from "axios";
 import { useRef } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const ResetPassword = () => {
     const pass = useRef();
     const params = useParams();
+    const navigate = useNavigate();
 
     const passwordHandler = async (e) => {
         e.preventDefault();
@@ -19,10 +18,10 @@ const ResetPassword = () => {
             const response = await axios.patch('http://localhost:3000/user/reset-password', newPassword)
             console.log(response)
             alert('reset password successfull')
-
+            navigate('/')
         }
         catch (err) {
-            console.log(err)
+            console.log(err.response.data)
         }
     }
 

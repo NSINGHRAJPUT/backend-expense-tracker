@@ -42,8 +42,10 @@ const SignUp = () => {
             } else {                        /////////////           sign in   //////////////////
                 response = await axios.post('http://localhost:3000/user/login-user', obj)
                 if (response.data === 'wrong password') {
+                    alert(response.data)
                     console.log(response.data)
                 } else if (response.data === 'user does not exists') {
+                    alert(response.data)
                     console.log(response.data)
                     setSignup(!signup)
                 } else {
