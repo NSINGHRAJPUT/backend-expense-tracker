@@ -9,6 +9,7 @@ router.post('/create-user', signController.createUser)
 router.post('/login-user', signController.loginUser)
 router.get('/get-users', signController.getUser)
 router.post('/forgot-password', signController.forgotPassword)
+router.patch('/reset-password', signController.resetPassword)
 
 
 

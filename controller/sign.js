@@ -2,6 +2,9 @@ const User = require('../model/user')
 const bCrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Sib = require('sib-api-v3-sdk');
+const { v4: uuidv4 } = require('uuid')
+const Forgotpassword = require('../model/forgotpassword');
+
 
 require('dotenv').config();
 
@@ -52,31 +55,58 @@ exports.loginUser = (req, res) => {
 
 exports.getUser = async (req, res) => {
     const id = req.headers.id;
-    console.log(id)
     User.findAll({ where: { id: id } }).then(([user]) => res.send(user)).catch(err => { res.send(err) })
 }
 
 exports.forgotPassword = async (req, res) => {
-    console.log(req.body)
     const RECEIVERS_MAIL = req.body.email;
+    const uid = uuidv4();
     try {
+        const userRes = await User.findAll({ where: { email: RECEIVERS_MAIL } })
+        const forgotpassRes = await Forgotpassword.findAll({ where: { userId: userRes[0].dataValues.id } })
+        console.log(forgotpassRes[0].dataValues)
+        const result = await Forgotpassword.create({
+            id: uid,
+            isActive: true,
+            userId: userRes[0].dataValues.id
+        })
+        console.log(result.dataValues)
         const client = Sib.ApiClient.instance;
         var apiKey = client.authentications["api-key"];
         apiKey.apiKey = process.env.FORGOT_API_KEY;
         const tranEmailApi = new Sib.TransactionalEmailsApi();
         const sender = { email: process.env.SENDER_MAIL };
-        const recivers = [{ email: process.env.RECEIVERS_MAIL }];
-
+        const recivers = [{ email: RECEIVERS_MAIL }];
         const response = await tranEmailApi.sendTransacEmail({
             sender,
             to: recivers,
             subject: "forgot password testing",
-            textContent: `just doing some testing`,
+            textContent: `reset password link:- 
+            http://localhost:3001/resetpassword/${uid}`,
         });
         res.send(response);
     }
     catch (err) {
         res.send(err)
     }
-
 }
+
+exports.resetPassword = async (req, res) => {
+    console.log(req.body)
+    const password = req.body.password;
+    try {
+        const useridRes = await Forgotpassword.findOne({ where: { id: req.body.uid } })
+        console.log(useridRes.dataValues)
+        bCrypt.hash(password, 10, async function (err, hash) {
+            if (err) res.send('something went wrong');
+            const userRes = await User.update({ password: hash }, { where: { id: useridRes.dataValues.userId } })
+            res.send(userRes)
+        });
+
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
+
