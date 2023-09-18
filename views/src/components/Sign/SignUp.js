@@ -51,6 +51,7 @@ const SignUp = () => {
                 } else {
                     const userId = response.data
                     navigate('/expense', { state: userId })
+                    console.log(userId)
                 }
             }
         }

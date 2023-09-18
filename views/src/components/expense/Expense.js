@@ -136,7 +136,13 @@ const Expense = () => {
 
     const reportHandler = async (e) => {
         e.preventDefault();
-        console.log('report downloaded')
+        try {
+            const response = await axios.get('http://localhost:3000/expense/download-expense', { headers: { 'id': userId } })
+            console.log(response)
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
     return <div className={premium ? 'expense dark' : 'expense'} data-aos="fade-left" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="900">
@@ -183,7 +189,7 @@ const Expense = () => {
                     })}
                 </tbody>
             </table>
-            {premium && <button onClick={reportHandler}>Download Expenses</button>}
+            {premium && <div className='premiumbtn'><button onClick={reportHandler}>Download Expenses</button></div>}
             {showboard && <h2 className='spaceX'>Leaderboard</h2>}
             {showboard && <table >
                 <tbody>

@@ -10,5 +10,7 @@ router.post('/create-expense', expenseController.createExpense)
 
 router.delete('/delete-expense', expenseController.deleteExpense)
 
+router.get('/download-expense', expenseController.downloadExpenses);
+
 
 module.exports = router;
