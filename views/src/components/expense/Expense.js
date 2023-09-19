@@ -13,6 +13,7 @@ const Expense = () => {
     const [data, setData] = useState([]);
     const [leaderboarddata, setleaderboardData] = useState([]);
     const [showboard, setshowboard] = useState(false)
+    const [count, setCout] = useState(0);
     const token = location.state.token;
     const userId = location.state.id;
 
@@ -22,7 +23,10 @@ const Expense = () => {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     useEffect(() => {
         axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
-            .then((res) => { setData(res.data) })
+            .then((res) => {
+                console.log(res)
+                setData(res.data.slice(count * 3, 3 * (count + 1)))
+            })
             .catch(err => console.log(err))
         axios.get('http://localhost:3000/user/get-users', { headers: { 'id': userId } })
             .then((res) => {
@@ -32,7 +36,7 @@ const Expense = () => {
                     setPremium(false)
                 }
             }).catch(err => console.log(err))
-    }, [token, userId])
+    }, [token, userId, count])
 
     /////////////////////                ADDING EXPENSES                     //////////////////////
     //                                                                                           //
@@ -133,12 +137,38 @@ const Expense = () => {
             console.log(err)
         }
     }
-
+    /////////////////////               Report Generation                  ////////////////////////
+    //                                                                                           //
+    //                                                                                           //   
+    ///////////////////////////////////////////////////////////////////////////////////////////////               
     const reportHandler = async (e) => {
         e.preventDefault();
         try {
             const response = await axios.get('http://localhost:3000/expense/download-expense', { headers: { 'id': userId } })
             console.log(response)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    /////////////////////               PAGINATION                         ////////////////////////
+    //                                                                                           //
+    //                                                                                           //   
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    const countIncrementHandler = async (e) => {
+        e.preventDefault();
+        try {
+            setCout((cnt) => cnt + 1)
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    const countDecrementHandler = async (e) => {
+        e.preventDefault();
+        try {
+            setCout((cnt) => cnt - 1)
         }
         catch (err) {
             console.log(err)
@@ -188,7 +218,10 @@ const Expense = () => {
                         </tr>
                     })}
                 </tbody>
-            </table>
+            </table><div>
+                {count && <button onClick={countDecrementHandler}>{count === 0 ? '' : count}</button>}
+                <button onClick={countIncrementHandler}>{count + 1}</button>
+            </div>
             {premium && <div className='premiumbtn'><button onClick={reportHandler}>Download Expenses</button></div>}
             {showboard && <h2 className='spaceX'>Leaderboard</h2>}
             {showboard && <table >
