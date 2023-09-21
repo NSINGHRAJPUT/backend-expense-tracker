@@ -45,7 +45,7 @@
 .expense-form {
     width: fit-content;
     padding: 3%;
-    border: 6px solid darkred;
+    border: 6px solid #fff;
     margin: auto;
 }
 
@@ -60,7 +60,7 @@ table {
     width: 80vw;
     margin: auto;
     padding: auto;
-    border: 2px solid darkred;
+    border: 2px solid #fff;
 }
 
 tr {
@@ -84,4 +84,21 @@ td button:hover {
     color: #fff;
     background: darkred;
     cursor: pointer;
+}
+
+li {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.pagination {
+    width: 80vw;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

@@ -14,6 +14,9 @@ const Expense = () => {
     const [leaderboarddata, setleaderboardData] = useState([]);
     const [showboard, setshowboard] = useState(false)
     const [count, setCout] = useState(0);
+    const [report, setReport] = useState(false);
+    const [reportdata, setreportdata] = useState([]);
+    const [pag, setpag] = useState(3)
     const token = location.state.token;
     const userId = location.state.id;
 
@@ -24,8 +27,8 @@ const Expense = () => {
     useEffect(() => {
         axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
             .then((res) => {
-                console.log(res)
-                setData(res.data.slice(count * 3, 3 * (count + 1)))
+                console.log(pag)
+                setData(res.data.slice(count * pag, pag * (count + 1)))
             })
             .catch(err => console.log(err))
         axios.get('http://localhost:3000/user/get-users', { headers: { 'id': userId } })
@@ -36,7 +39,7 @@ const Expense = () => {
                     setPremium(false)
                 }
             }).catch(err => console.log(err))
-    }, [token, userId, count])
+    }, [token, userId, count, pag])
 
     /////////////////////                ADDING EXPENSES                     //////////////////////
     //                                                                                           //
@@ -50,7 +53,6 @@ const Expense = () => {
             category: category.current.value,
             userId: location.state.id
         }
-        console.log(expenseObj)
         axios.post('http://localhost:3000/expense/create-expense', expenseObj)
             .then((res) => console.log(res))
             .catch(err => console.log(err))
@@ -59,7 +61,6 @@ const Expense = () => {
         category.current.value = ''
         axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
             .then((res) => {
-                console.log(res.data)
                 setData(res.data)
             })
             .catch(err => console.log(err))
@@ -75,11 +76,11 @@ const Expense = () => {
         axios.delete('http://localhost:3000/expense/delete-expense', { headers: { id: expenseId } })
             .then((res) => {
                 console.log(res)
-                // axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
-                //     .then((res) => {
-                //         setData(res.data)
-                //         alert('Item Deleted')
-                //     })
+                axios.get("http://localhost:3000/expense/get-expense", { headers: { 'authorization': token } })
+                    .then((res) => {
+                        setData(res.data)
+                        alert('Item Deleted')
+                    })
             })
             .catch(err => console.log(err))
     }
@@ -151,24 +152,12 @@ const Expense = () => {
             console.log(err)
         }
     }
-
-    /////////////////////               PAGINATION                         ////////////////////////
-    //                                                                                           //
-    //                                                                                           //   
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    const countIncrementHandler = async (e) => {
+    const prereportHandler = async (e) => {
         e.preventDefault();
         try {
-            setCout((cnt) => cnt + 1)
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
-    const countDecrementHandler = async (e) => {
-        e.preventDefault();
-        try {
-            setCout((cnt) => cnt - 1)
+            const response = await axios.get('http://localhost:3000/expense/pre-expense', { headers: { 'id': userId } })
+            setreportdata((pre) => [...response.data])
+            setReport(!report)
         }
         catch (err) {
             console.log(err)
@@ -201,9 +190,15 @@ const Expense = () => {
                 </form>
             </section>
             <h2 className='spaceX'>Expenses</h2>
+            <select onChange={(e) => setpag(e.target.value)}>
+                <option value={3}>3</option>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+            </select>
             <table data-aos="fade-right" data-aos-offset="400" data-aos-easing="ease-in-sine" data-aos-duration="1900">
                 <tbody>
                     <tr>
+                        <th>Time</th>
                         <th>Name</th>
                         <th>Price</th>
                         <th>Category</th>
@@ -211,6 +206,10 @@ const Expense = () => {
                     </tr>
                     {data.map((expense) => {
                         return <tr key={expense.id}>
+                            <td><div>
+                                <span>{expense.createdAt.slice(0, 10)}</span><br></br>
+                                <span>{expense.createdAt.slice(11, 19)}</span>
+                            </div></td>
                             <td >{expense.name}</td>
                             <td> {expense.price} </td>
                             <td>{expense.category}</td>
@@ -218,11 +217,18 @@ const Expense = () => {
                         </tr>
                     })}
                 </tbody>
-            </table><div>
-                {count && <button onClick={countDecrementHandler}>{count === 0 ? '' : count}</button>}
-                <button onClick={countIncrementHandler}>{count + 1}</button>
+            </table>
+            <div className='pagination'>
+                {count && <button onClick={() => (setCout((cnt) => cnt - 1))}>{count === 0 ? '' : count}</button>}
+                <button onClick={() => (setCout((cnt) => cnt + 1))}>{count + 1}</button>
             </div>
             {premium && <div className='premiumbtn'><button onClick={reportHandler}>Download Expenses</button></div>}
+            {premium && <div className='premiumbtn'><button onClick={prereportHandler}>Previously Downloaded Expenses</button></div>}
+            {report && <ul>
+                {reportdata.map((predata) => {
+                    return <li key={predata.id}><a href={predata.location} target='_blank' rel='noreferrer'>download{predata.id}</a></li>
+                })}
+            </ul>}
             {showboard && <h2 className='spaceX'>Leaderboard</h2>}
             {showboard && <table >
                 <tbody>

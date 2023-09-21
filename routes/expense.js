@@ -12,5 +12,7 @@ router.delete('/delete-expense', expenseController.deleteExpense)
 
 router.get('/download-expense', expenseController.downloadExpenses);
 
+router.get('/pre-expense', expenseController.getReports);
+
 
 module.exports = router;

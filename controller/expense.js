@@ -2,6 +2,7 @@ const Expense = require('../model/expense')
 const User = require('../model/user')
 const sequelize = require('../util/database');
 const AWS = require('aws-sdk');
+const Report = require('../model/download');
 
 exports.downloadExpenses = async (req, res) => {
     try {
@@ -29,7 +30,12 @@ exports.downloadExpenses = async (req, res) => {
                 if (err) {
                     console.log('something went wrong')
                 } else {
-                    console.log('success');
+                    console.log(s3response.Location);
+                    await Report.create({
+                        location: s3response.Location,
+                        userId: req.headers.id
+                    }).then(() => console.log('report generated'))
+                        .catch(() => console.log('report generation failed'))
                     res.send(s3response)
                 }
             })
@@ -39,6 +45,19 @@ exports.downloadExpenses = async (req, res) => {
         console.log(err)
     }
 }
+
+exports.getReports = async (req, res) => {
+    try {
+        const reportRes = await Report.findAll({ where: { userId: 2 } })
+        console.log(reportRes)
+        res.send(reportRes)
+    }
+    catch (err) {
+        console.log(err)
+        res.send(false)
+    }
+}
+
 exports.getExpense = (req, res) => {
     Expense.findAll({ where: { userId: req.user.userId } }).then((expense) => {
         console.log(expense)
