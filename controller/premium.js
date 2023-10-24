@@ -6,10 +6,10 @@ const Expense = require('../model/expense');
 exports.getPremium = async (req, res) => {
     try {
         var rzp = new Razorpay({
-            key_id: 'rzp_test_qiiuwe2XZWJPA6',
-            key_secret: 'aZIGfIzCa7pAA6d9w3XZgZkF'
+            key_id: `${process.env.KEY_ID}`,
+            key_secret: `${process.env.KEY_SECRET}`
         })
-        rzp.orders.create({ amount: 1000, currency: 'INR' }, (err, order) => {
+        rzp.orders.create({ amount: process.env.AMOUNT, currency: `${process.env.CURRENCY}` }, (err, order) => {
             if (err) {
                 throw new Error(JSON.stringify(err))
             } else {

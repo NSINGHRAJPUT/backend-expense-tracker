@@ -30,7 +30,6 @@ exports.downloadExpenses = async (req, res) => {
                 if (err) {
                     console.log('something went wrong')
                 } else {
-                    console.log(s3response.Location);
                     await Report.create({
                         location: s3response.Location,
                         userId: req.headers.id
@@ -49,18 +48,15 @@ exports.downloadExpenses = async (req, res) => {
 exports.getReports = async (req, res) => {
     try {
         const reportRes = await Report.findAll({ where: { userId: 2 } })
-        console.log(reportRes)
         res.send(reportRes)
     }
     catch (err) {
-        console.log(err)
         res.send(false)
     }
 }
 
 exports.getExpense = (req, res) => {
     Expense.findAll({ where: { userId: req.user.userId } }).then((expense) => {
-        console.log(expense)
         res.send(expense);
     }).catch(err => console.log(err))
 }
